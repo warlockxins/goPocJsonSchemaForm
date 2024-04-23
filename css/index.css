@@ -1,0 +1,36 @@
+main {
+    height: 100vh;
+    height: -webkit-fill-available;
+    max-height: 100vh;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+body {
+    height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+.htmx-settling img {
+  opacity: 0;
+}
+img {
+ transition: opacity 300ms ease-in;
+}
+
+.htmx-indicator {
+	opacity: 0;
+	transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+	opacity: 1
+}
+.htmx-request.htmx-indicator {
+	opacity: 1
+}
+
+.contact.htmx-swapping {
+	opacity: 0;
+	transition: opacity 500ms ease-in;
+}

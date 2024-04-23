@@ -1,0 +1,85 @@
+{{ block "index" . }}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>demo</title>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <link rel="stylesheet" type="" href="/css/index.css">
+  </head>
+  <body>
+	{{ template "form" .Form }}
+	<hr />
+	{{ template "display" .Data }}
+  </body>
+  <script>
+	  document.addEventListener("DOMContentLoaded", (event)=> {
+		  document.body.addEventListener("htmx:beforeSwap", function(evt) {
+                     if (evt.detail.xhr.status === 422) {
+			     evt.detail.shouldSwap = true;
+			     evt.detail.isError = false;
+		     }
+		  
+		  })
+	  })
+  </script>
+</html>
+{{ end }}
+
+{{ block "form" . }}
+<form hx-post="/contacts" hx-swap="outerHTML">
+	name: <input type="text" name="name" 
+		 {{ if .Values.name}}
+		 value="{{ .Values.name }}"
+		 {{ end }}
+	>
+	email: <input type="text" name="email" 
+	         {{ if .Values.email }}
+		 value="{{ .Values.email }}"
+		 {{ end }}
+	>
+    
+	{{ if .Errors.email }}
+		<div style="color:red"> {{ .Errors.email }} </div>
+	{{ end }}
+
+	<button type="submit">add</button>
+</form>
+{{ end }}
+
+{{ block "display" . }}
+<div id="contacts" style="display: flex; flex-direction: column">
+	{{ range .Contacts }}
+	  {{ template "contact" . }}
+       	{{ end }}
+</div>
+{{ end }}
+
+{{ block "contact" . }}
+<div id="contact-{{ .Id }}" style="display: flex"
+  class="contact"
+>
+	    <div 
+		    hx-indicator="#ci-{{ .Id }}"
+	            hx-target="#contact-{{ .Id }}"
+		    hx-swap="outerHTML swap:500ms"
+		    hx-delete="/contacts/{{ .Id }}" style="padding-right: 10px; color: red; cursor: pointer"
+	    >
+		DELETO
+	</div>	
+	name: <span> {{ .Name }} </span>
+	email: <span> {{ .Email }} </span>
+
+	<div id="ci-{{ .Id }}"  class="htmx-indicator">
+		<img src="/images/bars.svg" alt="loading" style="width: 1rem">
+	</div>
+   </div>
+{{ end }}
+
+
+{{ block "oob-contact" . }}
+  <div id="contacts" hx-swap-oob="afterbegin">
+	  {{ template "contact" . }}
+  </div>
+{{ end }}
